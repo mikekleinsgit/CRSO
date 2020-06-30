@@ -182,5 +182,16 @@ getRulesAsStrings <- function(rm){
   return(rm.strings)
 }
 
+#' Title
+#'
+#' @param rule rule
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getRuleEvents <- function(rule) {
+  return(strsplit(rule,"\\.")[[1]])
+}
 
 

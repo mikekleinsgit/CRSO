@@ -1,6 +1,6 @@
 Package: crso
 Title: Cancer Rule Set Optimization ('crso')
-Version: 0.1.1
+Version: 1.0
 Author: Michael Klein <michael.klein@yale.edu>
 Maintainer: Michael Klein <michael.klein@yale.edu>
 Description: An algorithm for identifying candidate driver combinations in cancer. CRSO 
@@ -19,15 +19,15 @@ Description: An algorithm for identifying candidate driver combinations in cance
   statistical penalty. 
   Users should consult the 'crso' vignette for an example walk through of a full CRSO run.
   The full description, of the CRSO algorithm is presented in: 
-  Klein MI, Cannataro V, Townsend J, Stern DF and Zhao H. "Identifying combinations of cancer driver in individual patients." 
-  BioRxiv 674234 [Preprint]. June 19, 2019. <doi:10.1101/674234>.
+  Klein MI, Cannataro VL, Newman S, Townsend JP, Stern DF and Zhao H. "Identifying Modules of Cooperating Cancer Drivers." 
+  BioRxiv [Preprint]. June 29, 2020. <https://doi.org/10.1101/2020.06.29.168229>.
   Please cite this article if you use 'crso'.
 Depends: R (>= 3.5.0), foreach
 Imports: stats, utils
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Suggests: 
     knitr,
     rmarkdown
