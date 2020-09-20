@@ -100,7 +100,7 @@ makeSubCoreList <- function(D,Q,rm,til,num.subsets,num.evaluated,msa,shouldPrint
 
   beg <- Sys.time()
   for(j in 1:num.subsets){
-    list.subsets.cores[[j]] <- oneSubCoreIteration(D,P,rm,til,subset.sizes[j],num.evaluated,msa)
+    list.subsets.cores[[j]] <- oneSubCoreIteration(D,Q,rm,til,subset.sizes[j],num.evaluated,msa)
     if(shouldPrint) {
       if(j%%5==0) print(paste0("Subset Core Iteration = ",j))
     }
