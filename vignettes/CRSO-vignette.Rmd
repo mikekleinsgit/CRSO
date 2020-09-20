@@ -115,60 +115,74 @@ print(paste0("Timing Vec = ",paste0(timing.vec,collapse = " ")))
 # Phase 2
 Phase 2 performans exhaustive evaluation over of top pool_sizes(k) rules for each k. The output of phase 2 is a list of top index matrices for each k (p2.iml = p2 index matrix list).  Each index matrix contains the rule sets ordered by performance. For example the best performing rule set of size 3 will be the first row of the K.3 index matrix. For K=1 the index matrix is a vector.
 ```{r phase 2}
-# print("Starting Phase Two")
-# beg <- Sys.time()
-# p2.iml <- makePhaseTwoImList(D,Q,rm.ordered,pool.sizes,
-#                              max.stored.p2,msa,shouldPrint = TRUE)
-# timing.vec["P2"] <- signif(difftime(Sys.time(),beg,units="min"),3)
-# print(paste0("Timing Vec = ",paste0(timing.vec,collapse = " ")))
-# full.results.list[["p2.iml"]] <- p2.iml
-# full.results.list[["timing.vec"]] <- timing.vec
-# 
-# ### Extra optional step to look at the best performances after phase 2
-# p2.pl <- evaluateListOfIMs(D,Q,rm.ordered,p2.iml,msa)
-# p2.best.perfs <- signif(unlist(lapply(p2.pl,max)),5)
-# print(paste0("P2 Best Perfs = ",paste0(p2.best.perfs,collapse = " ")))
+print("Starting Phase Two")
+beg <- Sys.time()
+p2.iml <- makePhaseTwoImList(D,Q,rm.ordered,pool.sizes,
+                             max.stored.p2,msa,shouldPrint = TRUE)
+timing.vec["P2"] <- signif(difftime(Sys.time(),beg,units="min"),3)
+print(paste0("Timing Vec = ",paste0(timing.vec,collapse = " ")))
+full.results.list[["p2.iml"]] <- p2.iml
+full.results.list[["timing.vec"]] <- timing.vec
+
+### Extra optional step to look at the best performances after phase 2
+p2.pl <- evaluateListOfIMs(D,Q,rm.ordered,p2.iml,msa)
+p2.best.perfs <- signif(unlist(lapply(p2.pl,max)),5)
+print(paste0("P2 Best Perfs = ",paste0(p2.best.perfs,collapse = " ")))
 ```
 
-# Phase 3 and Filtering
+# Phase 3 
 ```{r phase 3}
-# print("Starting Phase Three")
-# beg <- Sys.time()
-# fm.ordered <- getFamMat(rm.ordered)
-# p3.iml <- makePhaseThreeImList(D, Q, rm.ordered, fm.ordered, p2.iml,
-#                                pool.sizes, max.stored.p3,
-#                                max.nrs.p3, msa, shouldPrint = TRUE)
-# timing.vec["P3"] <- signif(difftime(Sys.time(),beg,units="min"),3)
-# full.results.list[["p3.iml"]] <- p3.iml
-# full.results.list[["timing.vec"]] <- timing.vec
-# print(paste0("Timing Vec = ",paste0(timing.vec,collapse = " ")))
-# 
-# 
-# p3.pl <- evaluateListOfIMs(D,Q,rm.ordered,p3.iml,msa)
-# p3.best.perfs <- signif(unlist(lapply(p3.pl,max)),5)
-# print(paste0("P3 Best Perfs = ",paste0(p3.best.perfs,collapse = " ")))
+### P3 ###############################################################
+print("Starting Phase Three")
+beg <- Sys.time()
+fm.ordered <- getFamMat(rm.ordered)
+p3.iml <- makePhaseThreeImList(D, Q, rm.ordered, fm.ordered, p2.iml, 
+                               pool.sizes, max.stored.p3, 
+                               max.nrs.p3, msa, shouldPrint = TRUE)
+p3.pl <- evaluateListOfIMs(D,Q,rm.ordered,p3.iml,msa) 
+p3.best.perfs <- signif(unlist(lapply(p3.pl,max)),5)
+timing.vec["P3"] <- signif(difftime(Sys.time(),beg,units="min"),3)
+full.results.list[["p3.iml"]] <- p3.iml
+full.results.list[["timing.vec"]] <- timing.vec
+print(paste0("P3 Best Perfs = ",paste0(p3.best.perfs,collapse = " ")))
+print(paste0("Timing Vec = ",paste0(timing.vec,collapse = " ")))
 ```
 
-# Extract best rule sets and core rule set
+# Phase 4
 ```{r phase4}
-
+print("Starting Phase Four")
+beg <- Sys.time()
+p4.iml <- makePhaseFourImList(D, Q, rm.ordered, p3.iml,k.max.4,max.stored.p4,max.nrs.p4,msa)
+p4.pl <- evaluateListOfIMs(D,Q,rm.ordered,p4.iml,msa) 
+p4.best.perfs <- signif(unlist(lapply(p4.pl,max)),5)
+timing.vec["P4"] <- signif(difftime(Sys.time(),beg,units="min"),3)
+full.results.list[["p4.iml"]] <- p4.iml
+full.results.list[["timing.vec"]] <- timing.vec
+print(paste0("P4 Best Perfs = ",paste0(p4.best.perfs,collapse = " ")))
+print(paste0("Timing Vec = ",paste0(timing.vec,collapse = " ")))
 ```
 
 # Extract best rule sets and core rule set
 ```{r get core}
-
+core.rs <- getCoreRS(D,rm.ordered,p4.pl,p4.iml)
+print(core.rs)
 ```
 
 # Make generalized core results
 ```{r gen core}
-# list.subset.cores <- makeSubCoreList(D,Q,rm.ordered,til.filtered,num.gc.iter,num.gc.eval)
-# ### list.subset.cores is a list of core rule set derived from subsampling iterations
-# 
-# gcr.df <- getGCRs(list.subset.cores) # Generalized core rules
-# print(gcr.df)
-# gcd.df <- getGCDs(list.subset.cores) # Generalized core duos
-# print(gcd.df)
-# gce.df <- getGCEs(list.subset.cores) # Generalized core events
-# print(gce.df)
+beg <- Sys.time()
+list.subset.cores <- makeSubCoreList(D,Q,rm.ordered,p4.iml,gc.iter,gc.eval,msa)
+timing.vec["GC"] <- signif(difftime(Sys.time(),beg,units="min"),3)
+full.results.list[["list.subset.cores"]] <- list.subset.cores
+full.results.list[["timing.vec"]] <- timing.vec
+timing.vec["Total"] <- sum(timing.vec[1:6])
+print(paste0("Timing Vec = ",paste0(timing.vec,collapse = " ")))
+
+gcr.df <- getGCRs(list.subset.cores) # Generalized core rules
+print(gcr.df)
+gcd.df <- getGCDs(list.subset.cores) # Generalized core duos
+print(gcd.df)
+gce.df <- getGCEs(list.subset.cores) # Generalized core events
+print(gce.df)
 ```
 
